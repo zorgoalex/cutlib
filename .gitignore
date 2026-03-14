@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+
+restore.log
+*.log
+
+# ai
+ai_docs/
+.claude/
+.gemini/
+.factory/
+CLAUDE.md
+AGENTS.md
