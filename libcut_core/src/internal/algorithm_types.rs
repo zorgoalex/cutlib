@@ -83,6 +83,7 @@ pub struct CLine {
     pub Snips: Vec<CSnip>,
     pub Parts_Sq: f64,
     pub crd: Crd,
+    pub onSheet: bool,
 }
 
 impl CLine {
@@ -111,6 +112,7 @@ impl Default for CLine {
             Snips: Vec::new(),
             Parts_Sq: 0.0,
             crd: Crd::default(),
+            onSheet: false,
         }
     }
 }
