@@ -1,4 +1,4 @@
-# SketchCut CLI — Reference
+# LibCut CLI — Reference
 
 ## Overview
 
@@ -8,9 +8,9 @@ with minimal waste, using guillotine (straight through) cuts.
 
 ## Synopsis
 
-```
-SketchCutCLI -i <input_file> [options]
-SketchCutCLI --help
+```bash
+LibCutCLI -i <input_file> [options]
+LibCutCLI --help
 ```
 
 ## Options
@@ -179,11 +179,11 @@ All informational and error messages go to **stderr**. Results go to **stdout** 
 
 | Condition | stderr message | Exit behavior |
 |-----------|----------------|---------------|
-| No arguments | — | Prints usage to stdout, exits |
-| Missing `-i` | `Error: input file required (-i)` | Exits |
-| No sheet size (no `-s` and no JSON `sheet`) | `Error: sheet size required (-s LxW or in JSON)` | Exits |
-| Input file not found | .NET `FileNotFoundException` | Exits with exception |
-| Invalid CSV/JSON format | .NET parse exception | Exits with exception |
+| No arguments | — | Prints usage and exits with code `0` |
+| Missing `-i` | `Error: Input file is required (-i).` | Exits with code `1` |
+| No sheet size (no `-s` and no JSON `sheet`) | Validation errors for `sheet.length` and `sheet.width` | Exits with code `1` |
+| Input file not found | `Error: input file not found: ...` | Exits with code `1` |
+| Invalid CSV/JSON format | `Error: Invalid CSV row...` or `Error: Input JSON is invalid.` | Exits with code `1` |
 
 On successful run, stderr shows a summary:
 ```
@@ -197,37 +197,37 @@ Parts: 4 types, 19 total pieces
 
 **Basic — CSV input, text output to terminal:**
 ```bash
-SketchCutCLI -i parts.csv -s 2440x1220
+LibCutCLI -i parts.csv -s 2440x1220
 ```
 
 **JSON input with all parameters in file:**
 ```bash
-SketchCutCLI -i order.json
+LibCutCLI -i order.json
 ```
 
 **Save JSON output to file:**
 ```bash
-SketchCutCLI -i parts.csv -s 2440x1220 -f json -o result.json
+LibCutCLI -i parts.csv -s 2440x1220 -f json -o result.json
 ```
 
 **Custom blade and padding:**
 ```bash
-SketchCutCLI -i parts.csv -s 2440x1220 -b 3 -p 15
+LibCutCLI -i parts.csv -s 2440x1220 -b 3 -p 15
 ```
 
 **Force length-first algorithm:**
 ```bash
-SketchCutCLI -i parts.csv -s 2440x1220 -a length
+LibCutCLI -i parts.csv -s 2440x1220 -a length
 ```
 
 **Pipe JSON results for further processing:**
 ```bash
-SketchCutCLI -i parts.csv -s 2440x1220 -f json 2>/dev/null | jq '.efficiencyPercent'
+LibCutCLI -i parts.csv -s 2440x1220 -f json 2>/dev/null | jq '.efficiencyPercent'
 ```
 
 **Override JSON file parameters from CLI:**
 ```bash
-SketchCutCLI -i order.json -s 3000x1500 -b 5 -a width
+LibCutCLI -i order.json -s 3000x1500 -b 5 -a width
 ```
 
 ## Coordinate System
@@ -243,7 +243,7 @@ SketchCutCLI -i order.json -s 3000x1500 -b 5 -a width
 ## Build
 
 ```bash
-dotnet publish src/SketchCutCLI.csproj -c Release -r win-x64 --self-contained -o build/
+./scripts/dotnet.sh publish src/LibCut.Cli/LibCut.Cli.csproj -c Release -r linux-x64 --self-contained false -o artifacts/linux-cli
 ```
 
-Output: `build/SketchCutCLI.exe` (~65 MB self-contained, no .NET runtime required).
+Output: `artifacts/linux-cli/LibCutCLI` (framework-dependent Linux build).
