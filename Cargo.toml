@@ -1,0 +1,3 @@
+[workspace]
+members = ["libcut_core", "libcut_cli", "libcut_api"]
+resolver = "2"
