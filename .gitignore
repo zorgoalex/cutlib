@@ -1,10 +1,37 @@
+# .NET
 **/bin/
 **/obj/
+*.user
+*.suo
+.vs/
 
+# Rust
+**/target/
+Cargo.lock
+
+# Artifacts
+artifacts/linux-cli/
+artifacts/linux-cli-self/
+
+# Logs
 restore.log
 *.log
 
-# ai
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Env
+.env
+.env.*
+
+# AI
 ai_docs/
 .claude/
 .gemini/
