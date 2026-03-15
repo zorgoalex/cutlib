@@ -3,21 +3,33 @@ set -e
 
 IMAGE="libcut-api"
 CONTAINER="libcut-api-smoke"
+NETWORK="libcut-smoke-net"
 PORT=8080
+
+cleanup() {
+  docker rm -f "$CONTAINER" 2>/dev/null || true
+  docker network rm "$NETWORK" 2>/dev/null || true
+}
+trap cleanup EXIT
 
 echo "Building Docker image..."
 docker build -t "$IMAGE" .
 
+echo "Creating network..."
+docker network create "$NETWORK"
+
 echo "Starting container..."
-docker run -d --name "$CONTAINER" -p "$PORT:$PORT" "$IMAGE"
+docker run -d --name "$CONTAINER" --network "$NETWORK" "$IMAGE"
 sleep 2
 
 echo "Testing /health..."
-HEALTH=$(curl -s http://localhost:$PORT/health)
+HEALTH=$(docker run --rm --network "$NETWORK" curlimages/curl \
+  -s "http://${CONTAINER}:${PORT}/health")
 echo "$HEALTH"
 
 echo "Testing /api/cut/optimize..."
-RESULT=$(curl -s -X POST http://localhost:$PORT/api/cut/optimize \
+RESULT=$(docker run --rm --network "$NETWORK" curlimages/curl \
+  -s -X POST "http://${CONTAINER}:${PORT}/api/cut/optimize" \
   -H "Content-Type: application/json" \
   -d '{
     "sheet": { "length": 2440, "width": 1220 },
@@ -34,8 +46,6 @@ SHEETS=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin
 PARTS=$(echo "$RESULT" | python3 -c "import json,sys; print(json.load(sys.stdin)['partsPlaced'])" 2>/dev/null || echo "FAIL")
 
 echo "Sheets: $SHEETS, Parts: $PARTS"
-
-docker stop "$CONTAINER" && docker rm "$CONTAINER"
 
 if [ "$SHEETS" = "2" ] && [ "$PARTS" = "19" ]; then
   echo "SMOKE TEST PASSED"
