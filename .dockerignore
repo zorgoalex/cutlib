@@ -1,0 +1,12 @@
+target/
+.git/
+.idea/
+.vscode/
+*.swp
+*.swo
+.env
+.env.*
+ai_docs/
+.claude/
+.gemini/
+.factory/
