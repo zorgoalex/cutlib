@@ -1,20 +1,8 @@
-# .NET
-**/bin/
-**/obj/
-*.user
-*.suo
-.vs/
-
 # Rust
 **/target/
 Cargo.lock
 
-# Artifacts
-artifacts/linux-cli/
-artifacts/linux-cli-self/
-
 # Logs
-restore.log
 *.log
 
 # OS
